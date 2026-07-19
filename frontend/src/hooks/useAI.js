@@ -118,7 +118,7 @@ export default function useAI() {
         provider,
         model,
         api_key: apiKey,
-        prompt,
+        prompt: message,
       });
 
       const aiReply = res.data.response;
@@ -148,6 +148,51 @@ export default function useAI() {
       );
     } finally {
       setLoading(false);
+    }
+  }
+  ///send message function
+  async function sendMessage(message) {
+    try {
+      // User message
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "user",
+          content: message,
+        },
+      ]);
+
+      // Temporary AI message
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: "Thinking...",
+          loading: true,
+        },
+      ]);
+
+      const res = await generateResponse({
+        provider,
+        model,
+        api_key: apiKey,
+        prompt: prompt,
+      });
+
+      const aiReply = res.data.response;
+
+      setMessages((prev) => {
+        const updated = [...prev];
+
+        updated[updated.length - 1] = {
+          role: "assistant",
+          content: aiReply,
+        };
+
+        return updated;
+      });
+    } catch (err) {
+      console.error(err);
     }
   }
 
@@ -211,8 +256,12 @@ export default function useAI() {
 
     generate,
 
+    sendMessage,
+
     clear,
 
     setMessages,
+
+    
   };
 }
