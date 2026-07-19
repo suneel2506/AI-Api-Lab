@@ -2,15 +2,21 @@ import { useEffect, useState } from "react";
 
 import { getProviders, getModels } from "../services/providerService";
 import { generateResponse } from "../services/testService";
+import { useAIContext } from "../context/AIContext";
 
 export default function useAI() {
   const [providers, setProviders] = useState([]);
   const [models, setModels] = useState([]);
+  const {
+    provider,
+    setProvider,
 
-  const [provider, setProvider] = useState("");
-  const [model, setModel] = useState("");
+    model,
+    setModel,
 
-  const [apiKey, setApiKey] = useState("");
+    apiKey,
+    setApiKey,
+  } = useAIContext();
 
   const [prompt, setPrompt] = useState("");
 
@@ -152,35 +158,46 @@ export default function useAI() {
   }
   ///send message function
   async function sendMessage(message) {
-    try {
-      // User message
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "user",
-          content: message,
-        },
-      ]);
+    // Add user + thinking message together
+    setMessages((prev) => [
+      ...prev,
+      {
+        role: "user",
+        content: message,
+      },
+      {
+        role: "assistant",
+        content: "Thinking...",
+        loading: true,
+      },
+    ]);
 
-      // Temporary AI message
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content: "Thinking...",
-          loading: true,
-        },
-      ]);
+    try {
+      console.log("===== CHAT REQUEST =====");
+      console.log({
+        provider,
+        model,
+        apiKey,
+        message,
+      });
 
       const res = await generateResponse({
         provider,
         model,
         api_key: apiKey,
-        prompt: prompt,
+        prompt: message,
       });
+
+      console.log("===== CHAT RESPONSE =====");
+      console.log(res);
+
+      if (!res.success) {
+        throw new Error(res.message);
+      }
 
       const aiReply = res.data.response;
 
+      // Replace only the "Thinking..." message
       setMessages((prev) => {
         const updated = [...prev];
 
@@ -192,10 +209,19 @@ export default function useAI() {
         return updated;
       });
     } catch (err) {
-      console.error(err);
+      setMessages((prev) => {
+        const updated = [...prev];
+
+        updated[updated.length - 1] = {
+          role: "assistant",
+          content: `❌ ${err.message}`,
+          error: true,
+        };
+
+        return updated;
+      });
     }
   }
-
   //-----------------------------------------
   // Clear
   //-----------------------------------------
@@ -261,7 +287,5 @@ export default function useAI() {
     clear,
 
     setMessages,
-
-    
   };
 }

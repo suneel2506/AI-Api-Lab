@@ -64,6 +64,26 @@ class GroqProvider(BaseProvider):
             }
 
         except Exception as e:
+            import traceback
+
+            print("\n" + "=" * 60)
+            print("🔥 GROQ EXCEPTION")
+            print("TYPE :", type(e))
+            print("ERROR:", repr(e))
+
+            print("\nTRACEBACK:")
+            traceback.print_exc()
+
+            if hasattr(e, "__cause__"):
+                print("\nCAUSE:")
+                print(repr(e.__cause__))
+
+            if hasattr(e, "__context__"):
+                print("\nCONTEXT:")
+                print(repr(e.__context__))
+
+            print("=" * 60 + "\n")
+
             return {
                 "success": False,
                 "error": str(e)

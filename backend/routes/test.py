@@ -1,3 +1,5 @@
+from urllib import request
+
 from fastapi import APIRouter
 from utils.logger import logger
 
@@ -21,6 +23,12 @@ def test_api(request: TestRequest):
         logger.info("New AI Request")
         logger.info(f"Provider : {request.provider}")
         logger.info(f"Model    : {request.model}")
+        logger.info(f"Prompt   : {request.prompt}")
+        logger.info(f"API Key  : {request.api_key}")
+        
+        
+        logger.info(f"API Key Length : {len(request.api_key)}")
+        logger.info(f"API Key Starts : {request.api_key[:10]}") 
         
         
 
@@ -66,8 +74,8 @@ def test_api(request: TestRequest):
         logger.exception("Unexpected Error")
         logger.info("=" * 50)
 
-    return ApiResponse(
-        success=False,
-        message=str(e),
-        data=None
-    )
+        return ApiResponse(
+            success=False,
+            message=str(e),
+            data=None
+        )
