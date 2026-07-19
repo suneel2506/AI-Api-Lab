@@ -16,6 +16,8 @@ export default function useAI() {
 
   const [response, setResponse] = useState("");
 
+  const [messages, setMessages] = useState([]);
+
   const [responseTime, setResponseTime] = useState("--");
 
   const [loading, setLoading] = useState(false);
@@ -111,40 +113,40 @@ export default function useAI() {
     setError("");
 
     setResponse("Thinking...");
-
     try {
       const res = await generateResponse({
         provider,
-        api_key: apiKey,
         model,
+        api_key: apiKey,
         prompt,
       });
 
-      console.log("Backend Response:", res);
+      const aiReply = res.data.response;
 
-      if (!res.success) {
-        setError(res.message);
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "user",
+          content: prompt,
+        },
+        {
+          role: "assistant",
+          content: aiReply,
+        },
+      ]);
 
-        return;
-      }
-
-      setResponse(res.data.response);
+      setResponse(aiReply);
 
       setResponseTime(res.data.response_time);
-    } 
-    
-    catch (err) {
 
-        console.error(err);
-    
-        setError(
-            err.response?.data?.message ||
-            err.message ||
-            "Unknown error occurred."
-        );
-    
-    }
-    finally {
+      setPrompt("");
+    } catch (err) {
+      console.error(err);
+
+      setError(
+        err.response?.data?.message || err.message || "Unknown error occurred.",
+      );
+    } finally {
       setLoading(false);
     }
   }
@@ -152,17 +154,15 @@ export default function useAI() {
   //-----------------------------------------
   // Clear
   //-----------------------------------------
-  
+
   function clear() {
-  
-      setPrompt("");
-  
-      setResponse("");
-  
-      setResponseTime("--");
-  
-      setError("");
-  
+    setPrompt("");
+
+    setResponse("");
+
+    setResponseTime("--");
+
+    setError("");
   }
 
   //-----------------------------------------
@@ -201,6 +201,8 @@ export default function useAI() {
 
     response,
 
+    messages,
+
     responseTime,
 
     loading,
@@ -210,5 +212,7 @@ export default function useAI() {
     generate,
 
     clear,
+
+    setMessages,
   };
 }
