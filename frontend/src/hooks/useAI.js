@@ -118,7 +118,7 @@ export default function useAI() {
         provider,
         model,
         api_key: apiKey,
-        prompt: message,
+        prompt: prompt,
       });
 
       const aiReply = res.data.response;
