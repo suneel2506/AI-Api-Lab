@@ -3,23 +3,16 @@ function ChatMessage({ role, content }) {
   
     return (
       <div
-        className={`flex mb-4 ${
+        className={`mb-4 flex ${
           isUser ? "justify-end" : "justify-start"
         }`}
       >
         <div
-          className={`
-            max-w-[80%]
-            rounded-2xl
-            px-4
-            py-3
-            whitespace-pre-wrap
-            ${
-              isUser
-                ? "bg-blue-600 text-white"
-                : "bg-slate-700 text-slate-100"
-            }
-          `}
+          className={`max-w-[75%] rounded-2xl px-4 py-3 whitespace-pre-wrap ${
+            isUser
+              ? "bg-cyan-500 text-black"
+              : "bg-slate-700 text-white"
+          }`}
         >
           {content}
         </div>

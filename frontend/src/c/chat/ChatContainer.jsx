@@ -2,7 +2,7 @@ import ChatHeader from "./ChatHeader";
 import ChatMessages from "./ChatMessages";
 import ChatInput from "./ChatInput";
 
-function ChatContainer({ messages }) {
+function ChatContainer({ messages, onSend }) {
   return (
     <div
       className="
@@ -19,7 +19,7 @@ function ChatContainer({ messages }) {
 
       <ChatMessages messages={messages} />
 
-      <ChatInput />
+      <ChatInput onSend={onSend} />
     </div>
   );
 }
