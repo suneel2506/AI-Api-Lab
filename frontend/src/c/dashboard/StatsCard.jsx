@@ -1,48 +1,66 @@
 import Card from "../common/Card";
 
-function StatsCard({
-  provider = "--",
-  model = "--",
-  responseTime = "--",
-}) {
+function StatsCard({ provider, model, responseTime, loading, error }) {
+  let status = "Ready";
+  let statusColor = "text-green-400";
+
+  if (loading) {
+    status = "Generating";
+    statusColor = "text-yellow-400";
+  }
+
+  if (error) {
+    status = "Error";
+    statusColor = "text-red-400";
+  }
+  const providerName = provider === "groq" ? "Groq" : provider || "--";
+
+  const modelName =
+    model?.replaceAll("-", " ")?.replace("versatile", "") || "--";
   return (
-    <Card title="📊 Statistics">
+    <Card title="📊 Session Statistics">
+      <div className="space-y-5">
+        <StatRow icon="🧠" title="Provider" value={providerName} />
 
-      <div className="grid grid-cols-3 gap-4">
+        <StatRow icon="⚡" title="Model" value={modelName} />
 
-        <div className="rounded-xl bg-slate-800 p-4 text-center">
-          <p className="text-slate-400 text-sm">
-            Provider
-          </p>
+        <StatRow
+          icon="⏱"
+          title="Response Time"
+          value={responseTime !== "--" ? `${responseTime} sec` : "--"}
+        />
 
-          <h3 className="mt-2 text-lg font-bold">
-            {provider}
-          </h3>
+        <div className="flex justify-between items-center border-t border-slate-700 pt-4">
+          <span className="font-medium">🟢 Status</span>
+
+          <span
+            className={`
+        rounded-full
+        px-3
+        py-1
+        text-sm
+        font-semibold
+        ${statusColor}
+        bg-slate-800
+    `}
+          >
+            {status}
+          </span>
         </div>
-
-        <div className="rounded-xl bg-slate-800 p-4 text-center">
-          <p className="text-slate-400 text-sm">
-            Model
-          </p>
-
-          <h3 className="mt-2 text-lg font-bold">
-            {model}
-          </h3>
-        </div>
-
-        <div className="rounded-xl bg-slate-800 p-4 text-center">
-          <p className="text-slate-400 text-sm">
-            Response Time
-          </p>
-
-          <h3 className="mt-2 text-lg font-bold">
-            {responseTime}
-          </h3>
-        </div>
-
       </div>
-
     </Card>
+  );
+}
+
+function StatRow({ icon, title, value }) {
+  return (
+    <div className="flex justify-between items-center">
+      <span className="font-medium">
+        {icon} {title}
+      </span>
+
+      <span className="text-slate-300 text-right break-all">{value}</span>
+    </div>
   );
 }
 

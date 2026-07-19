@@ -1,6 +1,6 @@
 import MainLayout from "../layouts/MainLayout";
 import Card from "../c/common/Card";
-
+import ErrorCard from "../c/dashboard/ErrorCard";
 import Navbar from "../c/layout/Navbar";
 import Sidebar from "../c/layout/Sidebar";
 import Footer from "../c/layout/Footer";
@@ -97,6 +97,8 @@ function Dashboard() {
                   provider={provider}
                   model={model}
                   responseTime={responseTime}
+                  loading={loading}
+                  error={error}
                 />
 
                 <div className="mt-6">
@@ -104,7 +106,7 @@ function Dashboard() {
                     {loading ? "🤖 Thinking..." : "🚀 Generate Response"}
                   </Button>
                 </div>
-
+                {error && <ErrorCard error={error} />}
                 <ResponsePanel
                   loading={loading}
                   response={response}

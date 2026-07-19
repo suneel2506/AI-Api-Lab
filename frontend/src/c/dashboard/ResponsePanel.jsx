@@ -9,7 +9,7 @@ function ResponsePanel({ loading, response, onClear }) {
     try {
       await navigator.clipboard.writeText(response);
 
-      alert("Response copied!");
+      console.log("Response copied.");
     } catch (err) {
       console.error(err);
     }
@@ -63,7 +63,25 @@ function ResponsePanel({ loading, response, onClear }) {
                 animate-fadeIn
             "
             >
-              {response || "Waiting for AI response..."}
+              {response ? (
+                <div className="whitespace-pre-wrap leading-7 text-slate-100">
+                  {response}
+                </div>
+              ) : (
+                <div className="flex min-h-[250px] items-center justify-center">
+                  <div className="text-center text-slate-400">
+                    <div className="mb-3 text-5xl">🤖</div>
+
+                    <p className="text-lg font-medium">
+                      Your AI response will appear here.
+                    </p>
+
+                    <p className="mt-2 text-sm">
+                      Select a provider and send a prompt.
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

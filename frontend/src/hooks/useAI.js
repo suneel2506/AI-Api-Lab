@@ -131,11 +131,20 @@ export default function useAI() {
       setResponse(res.data.response);
 
       setResponseTime(res.data.response_time);
-    } catch (err) {
-      console.error("Backend Error:", err);
+    } 
+    
+    catch (err) {
 
-      setError("Backend Error");
-    } finally {
+        console.error(err);
+    
+        setError(
+            err.response?.data?.message ||
+            err.message ||
+            "Unknown error occurred."
+        );
+    
+    }
+    finally {
       setLoading(false);
     }
   }
